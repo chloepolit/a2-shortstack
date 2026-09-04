@@ -8,16 +8,38 @@ const http = require( 'http' ),
       port = 3000
 
 const appdata = [
-  { 'model': 'toyota', 'year': 1999, 'mpg': 23 },
-  { 'model': 'honda', 'year': 2004, 'mpg': 30 },
-  { 'model': 'ford', 'year': 1987, 'mpg': 14} 
+  { id: 1, task: 'Finish HW1', creationDate: '2026-09-01T09:00', deadline: '2026-09-05T23:59', category: 'classes', priority: 'high' },
+  { id: 2, task: 'Buy groceries', creationDate: '2026-09-03T09:00', deadline: '2026-09-06T18:00', category: 'personal', priority: 'low' }
 ]
+
+let nextID = 3
+
+const derivePriority = function(item){
+    const millisecondsLeft = item.creationDate - item.deadline
+    const daysRemaining = millisecondsLeft / (1000 * 60 * 60 * 24)
+
+    let priority
+    if( isNaN(daysRemaining) || daysRemaining <= 1) {
+    priority = 'urgent'
+  } else if(daysRemaining <= 3) {
+    priority = 'high'
+  } else if(daysRemaining <= 7) {
+    priority = 'medium'
+  } else {
+    priority = 'low'
+  }
+
+  return {...item, priority, id: nextID++}
+}
 
 const server = http.createServer( function( request,response ) {
   if( request.method === 'GET' ) {
     handleGet( request, response )    
   }else if( request.method === 'POST' ){
     handlePost( request, response ) 
+  }
+  else if(request.method === 'DELETE'){
+    handleDelete(request, response)
   }
 })
 
@@ -26,7 +48,12 @@ const handleGet = function( request, response ) {
 
   if( request.url === '/' ) {
     sendFile( response, 'public/index.html' )
-  }else{
+  }
+  else if(request.url === '/data'){
+    response.writeHead(200, {'Content-Type': 'application/json'})
+    response.end(JSON.stringify(appdata))
+  }
+  else{
     sendFile( response, filename )
   }
 }
@@ -39,13 +66,43 @@ const handlePost = function( request, response ) {
   })
 
   request.on( 'end', function() {
-    console.log( JSON.parse( dataString ) )
-    // ... do something with the data here!!!
+    const incoming = JSON.parse( dataString )
+    const newItem  = derivePriority(incoming)
 
-    response.writeHead( 200, "OK", {'Content-Type': 'text/plain' })
+    appdata.push( newItem )
 
-    // change this to incorporate data
-    response.end('test')
+    response.writeHead( 200, { 'Content-Type': 'application/json' })
+    response.end( JSON.stringify( appdata ) )
+  })
+}
+
+const handleDelete = function(request, response){
+  let dataString = ''
+
+  request.on( 'data', function( data ) {
+      dataString += data 
+  })
+
+  request.on( 'end', function() {
+    let body
+    try{
+      body = JSON.parse(dataString)
+    }
+    catch(err){
+      response.writeHead(400, {'Content-Type': 'text/plain'})
+      response.end('Bad Request: Invalid JSON')
+      return
+    }
+
+    const idToDelete = body.id
+    const index = appdata.findIndex(item => item.id === idToDelete)
+
+    if(index !== -1){
+      appdata.splice(index, 1)
+    }
+
+    response.writeHead(200, {'Content-Type': 'application/json'})
+    response.end(JSON.stringify(appdata))
   })
 }
 

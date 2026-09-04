@@ -1,18 +1,50 @@
 <!doctype html>
 <html lang='en'>
   <head>
-    <title>CS4241 Assignment 2</title>
-    <meta charset='utf-8' />
+    <title>CS 4241 A2</title>
+    <meta charset='utf-8'>
     <script src='js/main.js'></script>
-    <link rel='stylesheet' href='css/main.css' />
+    <link rel='stylesheet' href='css/main.css'>
     
     <!-- get rid of favicon error -->
-    <link rel='icon' href='data:;base64,iVBORw0KGgo=' />
+    <link rel='icon' href='data:;base64,iVBORw0KGgo='>
   </head>
+
+
   <body>
-    <form>
-      <input type='text' id='yourname' value='your name here'>
-      <button>submit</button>
+    <form action="/my-handling-form-page" method="post">
+    <h1>Add a Task</h1>
+    <p>
+        <label for="task">Task:</label>
+        <input type="text" id="task" name="user_name">
+    </p>
+    <p>
+        <label for="deadline">Deadline:</label>
+        <input type="datetime-local" 
+        id="deadline" 
+        name="deadline"
+        min="2026-09-04T00:00"
+        max="2026-12-31T23:59">
+    </p>
+    <p>
+        <label for="creation-date">Creation Date:</label>
+        <input type="datetime-local" 
+        id="creation-date" 
+        name="creation-date"
+        min="2026-09-04T00:00"
+        max="2026-12-31T23:59">
+    </p>
+    <p>
+        <label for="category">Choose a category:</label>
+        <select id="category" name="category">
+            <option value="classes">Classes</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+        </select>
+    </p>
+    <button type="submit" class="button">Add</button>
+    
     </form>
+    <a href="/list.html" class="button">View Current Tasks</a>
   </body>
 </html>

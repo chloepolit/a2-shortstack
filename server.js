@@ -15,7 +15,10 @@ const appdata = [
 let nextID = 3
 
 const derivePriority = function(item){
-    const millisecondsLeft = item.creationDate - item.deadline
+    const created = new Date(item.creationDate)
+    const dueDate = new Date(item.deadline)
+
+    const millisecondsLeft = dueDate - created
     const daysRemaining = millisecondsLeft / (1000 * 60 * 60 * 24)
 
     let priority

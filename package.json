@@ -1,8 +1,8 @@
 {
-  "name": "",
-  "version": "",
-  "description": "",
-  "author": "",
+  "name": "a2-ChloePolit",
+  "version": "0.1.0",
+  "description": "To Do List Manager",
+  "author": "Chloe Polit",
   "scripts": {
     "start": "node server.js"
   },
